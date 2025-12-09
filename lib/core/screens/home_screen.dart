@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:resume_builder_project/core/screens/add_resume_builder_screen.dart';
+import 'package:resume_builder_project/core/utils/app_utils.dart';
 import '../../services/notifications_repository.dart';
 import '../widgets/app_drawer.dart';
 import 'download_screen.dart';
@@ -15,35 +16,12 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   // Hàm confirm thoát
-  Future<bool> _confirmExit() async {
-    final result = await showDialog<bool>(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text("Thoát app?"),
-          content: const Text("Bạn có chắc muốn thoát ứng dụng không?"),
-          actions: [
-            TextButton(
-              child: const Text("Không"),
-              onPressed: () => Navigator.pop(context, false),
-            ),
-            TextButton(
-              child: const Text("Thoát"),
-              onPressed: () => Navigator.pop(context, true),
-            ),
-          ],
-        );
-      },
-    );
-
-    return result == true;
-  }
 
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        bool ok = await _confirmExit();
+        bool ok = await AppUtils.confirmExit(context);
         if (ok) SystemNavigator.pop();
         return false; // chặn back mặc định
       },

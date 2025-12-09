@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import "package:resume_builder_project/core/screens/resume_information_screen.dart";
 
 class AddResumeBuilderScreen extends StatelessWidget {
   const AddResumeBuilderScreen({super.key});
@@ -49,7 +50,10 @@ class AddResumeBuilderScreen extends StatelessWidget {
                   ),
                 ),
                 onPressed: () {
-                  // xử lý thêm resume
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const ResumeInformationScreen()),
+                  );
                 },
                 child: const Text(
                   "Create Resume",
