@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_exit_app/flutter_exit_app.dart';
 
 import '../screens/notifications_screen.dart';
+import '../utils/app_utils.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
@@ -93,29 +94,11 @@ class AppDrawer extends StatelessWidget {
             ),
             title: Text("Exit App"),
             onTap: () async {
-              final shouldExit = await showDialog<bool>(
-                context: context,
-                builder: (context) {
-                  return AlertDialog(
-                    title: Text("Thoát app?"),
-                    content: Text("Bạn có chắc muốn thoát ứng dụng không?"),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(context, false),
-                        child: Text("Không"),
-                      ),
-                      TextButton(
-                        onPressed: () => Navigator.pop(context, true),
-                        child: Text("Thoát"),
-                      ),
-                    ],
-                  );
-                },
-              );
-
-              if (shouldExit == true) {
-                SystemNavigator.pop();
-              }
+              AppUtils.confirmExit(context).then((ok) {
+                if (ok) {
+                  FlutterExitApp.exitApp();
+                }
+              });
             }
           ),
         ],

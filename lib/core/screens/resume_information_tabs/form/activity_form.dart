@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 
-class EducationForm extends StatefulWidget {
+class ActivityForm extends StatefulWidget {
   final Map<String, dynamic>? data;
   final Function(Map<String, dynamic>) onSave;
 
-  const EducationForm({super.key, this.data, required this.onSave});
+  const ActivityForm({super.key, this.data, required this.onSave});
 
   @override
-  State<EducationForm> createState() => _EducationFormState();
+  State<ActivityForm> createState() => _ActivityFormState();
 }
 
-class _EducationFormState extends State<EducationForm> {
-  final _courseCtrl = TextEditingController();
+class _ActivityFormState extends State<ActivityForm> {
+  final _organizationCtrl = TextEditingController();
   final _fromCtrl = TextEditingController();
   final _toCtrl = TextEditingController();
-  final _schoolCtrl = TextEditingController();
-  final _gradeCtrl = TextEditingController();
+  final _roleCtrl = TextEditingController();
+  final _descriptionCtrl = TextEditingController();
 
   @override
   void initState() {
@@ -23,21 +23,21 @@ class _EducationFormState extends State<EducationForm> {
 
     // Khởi tạo các text field thông thường
     if (widget.data != null) {
-      _courseCtrl.text = widget.data!["course-degree"] ?? "";
+      _organizationCtrl.text = widget.data!["organization-name"] ?? "";
       _fromCtrl.text = widget.data!["from"] ?? "";
       _toCtrl.text = widget.data!["to"] ?? "";
-      _schoolCtrl.text = widget.data!["school-university"] ?? "";
-      _gradeCtrl.text = widget.data!["grade-score"] ?? "";
+      _roleCtrl.text = widget.data!["role"] ?? "";
+      _descriptionCtrl.text = widget.data!["description"] ?? "";
     }
   }
 
   @override
   void dispose() {
-    _courseCtrl.dispose();
+    _organizationCtrl.dispose();
     _fromCtrl.dispose();
     _toCtrl.dispose();
-    _schoolCtrl.dispose();
-    _gradeCtrl.dispose();
+    _roleCtrl.dispose();
+    _descriptionCtrl.dispose();
     super.dispose();
   }
 
@@ -46,7 +46,7 @@ class _EducationFormState extends State<EducationForm> {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
-        title: const Text("Education Details"),
+        title: const Text("Activity Details"),
         centerTitle: true,
         automaticallyImplyLeading: false,
       ),
@@ -60,8 +60,8 @@ class _EducationFormState extends State<EducationForm> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     TextField(
-                      controller: _courseCtrl,
-                      decoration: const InputDecoration(labelText: "Course / Degree"),
+                      controller: _organizationCtrl,
+                      decoration: const InputDecoration(labelText: "Organization Name"),
                     ),
                     const SizedBox(height: 12),
 
@@ -83,17 +83,18 @@ class _EducationFormState extends State<EducationForm> {
                       ],
                     ),
                     const SizedBox(height: 20),
+
                     TextField(
-                      controller: _schoolCtrl,
-                      decoration: const InputDecoration(labelText: "School / University"),
+                      controller: _roleCtrl,
+                      decoration: const InputDecoration(labelText: "Role"),
                     ),
 
                     const SizedBox(height: 20),
+
                     TextField(
-                      controller: _gradeCtrl,
-                      decoration: const InputDecoration(labelText: "Grade / Score"),
+                      controller: _descriptionCtrl,
+                      decoration: const InputDecoration(labelText: "Description"),
                     ),
-                    const SizedBox(height: 30),
 
                     SizedBox(
                       width: double.infinity,
@@ -107,11 +108,11 @@ class _EducationFormState extends State<EducationForm> {
                         ),
                         onPressed: () {
                           widget.onSave({
-                            "course-degree": _courseCtrl.text,
+                            "organization-name": _organizationCtrl.text,
                             "from": _fromCtrl.text,
                             "to": _toCtrl.text,
-                            "school-university": _schoolCtrl.text,
-                            "grade-score": _gradeCtrl.text,
+                            "role": _roleCtrl.text,
+                            "description": _descriptionCtrl.text,
                           });
                           Navigator.pop(context);
                         },

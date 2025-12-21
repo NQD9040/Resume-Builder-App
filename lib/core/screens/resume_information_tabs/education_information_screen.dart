@@ -88,7 +88,7 @@ class _EducationInformationScreenState
                                   final ok = await AppUtils.confirmDelete(context);
                                   if (ok) {
                                     setState(() {
-                                      educations.removeAt(i); // FIX BUG HERE
+                                      educations.removeAt(i);
                                     });
                                   }
                                 },

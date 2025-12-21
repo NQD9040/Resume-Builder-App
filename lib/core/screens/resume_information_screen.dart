@@ -1,7 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:resume_builder_project/core/screens/resume_information_tabs/activity_information_screen.dart';
+import 'package:resume_builder_project/core/screens/resume_information_tabs/award_information_screen.dart';
+import 'package:resume_builder_project/core/screens/resume_information_tabs/certification_information_screen.dart';
 import 'package:resume_builder_project/core/screens/resume_information_tabs/contact_information_screen.dart';
+import 'package:resume_builder_project/core/screens/resume_information_tabs/cover_letter_information_screen.dart';
 import 'package:resume_builder_project/core/screens/resume_information_tabs/education_information_screen.dart';
 import 'package:resume_builder_project/core/screens/resume_information_tabs/experience_information_screen.dart';
+import 'package:resume_builder_project/core/screens/resume_information_tabs/objective_information_screen.dart';
+import 'package:resume_builder_project/core/screens/resume_information_tabs/photo_sign_information_screen.dart';
+import 'package:resume_builder_project/core/screens/resume_information_tabs/preview_screen.dart';
+import 'package:resume_builder_project/core/screens/resume_information_tabs/project_information_screen.dart';
+import 'package:resume_builder_project/core/screens/resume_information_tabs/reference_information_screen.dart';
+import 'package:resume_builder_project/core/screens/resume_information_tabs/skill_information_screen.dart';
 
 class ResumeInformationScreen extends StatefulWidget {
   const ResumeInformationScreen({super.key});
@@ -106,25 +116,25 @@ class _ResumeInformationScreenState extends State<ResumeInformationScreen>
                 // Tab 3: Experience
                 const ExperienceInformationScreen(),
                 // Tab 4: Project
-                const ContactInformationScreen(),
+                const ProjectInformationScreen(),
                 // Tab 5: Skill
-                const ContactInformationScreen(),
+                const SkillInformationScreen(),
                 // Tab 6: Award
-                const ContactInformationScreen(),
+                const AwardInformationScreen(),
                 // Tab 7: Activity
-                const ContactInformationScreen(),
+                const ActivityInformationScreen(),
                 // Tab 8: Certification
-                const ContactInformationScreen(),
+                const CertificationInformationScreen(),
                 // Tab 9: Reference
-                const ContactInformationScreen(),
+                const ReferenceInformationScreen(),
                 // Tab 10: Objective
-                const ContactInformationScreen(),
+                const ObjectiveInformationScreen(),
                 // Tab 11: Cover Letter
-                const ContactInformationScreen(),
+                const CoverLetterInformationScreen(),
                 // Tab 12: Photo - Sign
-                const ContactInformationScreen(),
+                const PhotoSignInformationScreen(),
                 // Tab 13: Preview
-                const ContactInformationScreen(),
+                const PreviewScreen(),
               ],
             ),
           ),

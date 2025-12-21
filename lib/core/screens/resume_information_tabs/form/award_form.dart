@@ -1,21 +1,19 @@
 import 'package:flutter/material.dart';
 
-class EducationForm extends StatefulWidget {
+class AwardForm extends StatefulWidget {
   final Map<String, dynamic>? data;
   final Function(Map<String, dynamic>) onSave;
 
-  const EducationForm({super.key, this.data, required this.onSave});
+  const AwardForm({super.key, this.data, required this.onSave});
 
   @override
-  State<EducationForm> createState() => _EducationFormState();
+  State<AwardForm> createState() => _AwardFormState();
 }
 
-class _EducationFormState extends State<EducationForm> {
-  final _courseCtrl = TextEditingController();
-  final _fromCtrl = TextEditingController();
-  final _toCtrl = TextEditingController();
-  final _schoolCtrl = TextEditingController();
-  final _gradeCtrl = TextEditingController();
+class _AwardFormState extends State<AwardForm> {
+  final _awardCtrl = TextEditingController();
+  final _yearCtrl = TextEditingController();
+  final _detailCtrl = TextEditingController();
 
   @override
   void initState() {
@@ -23,21 +21,17 @@ class _EducationFormState extends State<EducationForm> {
 
     // Khởi tạo các text field thông thường
     if (widget.data != null) {
-      _courseCtrl.text = widget.data!["course-degree"] ?? "";
-      _fromCtrl.text = widget.data!["from"] ?? "";
-      _toCtrl.text = widget.data!["to"] ?? "";
-      _schoolCtrl.text = widget.data!["school-university"] ?? "";
-      _gradeCtrl.text = widget.data!["grade-score"] ?? "";
+      _awardCtrl.text = widget.data!["award-name"] ?? "";
+      _yearCtrl.text = widget.data!["year"] ?? "";
+      _detailCtrl.text = widget.data!["detail"] ?? "";
     }
   }
 
   @override
   void dispose() {
-    _courseCtrl.dispose();
-    _fromCtrl.dispose();
-    _toCtrl.dispose();
-    _schoolCtrl.dispose();
-    _gradeCtrl.dispose();
+    _awardCtrl.dispose();
+    _yearCtrl.dispose();
+    _detailCtrl.dispose();
     super.dispose();
   }
 
@@ -46,7 +40,7 @@ class _EducationFormState extends State<EducationForm> {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
-        title: const Text("Education Details"),
+        title: const Text("Award Details"),
         centerTitle: true,
         automaticallyImplyLeading: false,
       ),
@@ -60,38 +54,20 @@ class _EducationFormState extends State<EducationForm> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     TextField(
-                      controller: _courseCtrl,
-                      decoration: const InputDecoration(labelText: "Course / Degree"),
+                      controller: _awardCtrl,
+                      decoration: const InputDecoration(labelText: "Name of Award or Achievement"),
                     ),
                     const SizedBox(height: 12),
 
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            controller: _fromCtrl,
-                            decoration: const InputDecoration(labelText: "From"),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: TextField(
-                            controller: _toCtrl,
-                            decoration: const InputDecoration(labelText: "To"),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 20),
                     TextField(
-                      controller: _schoolCtrl,
-                      decoration: const InputDecoration(labelText: "School / University"),
+                      controller: _yearCtrl,
+                      decoration: const InputDecoration(labelText: "Year"),
                     ),
 
                     const SizedBox(height: 20),
                     TextField(
-                      controller: _gradeCtrl,
-                      decoration: const InputDecoration(labelText: "Grade / Score"),
+                      controller: _detailCtrl,
+                      decoration: const InputDecoration(labelText: "Details"),
                     ),
                     const SizedBox(height: 30),
 
@@ -107,11 +83,9 @@ class _EducationFormState extends State<EducationForm> {
                         ),
                         onPressed: () {
                           widget.onSave({
-                            "course-degree": _courseCtrl.text,
-                            "from": _fromCtrl.text,
-                            "to": _toCtrl.text,
-                            "school-university": _schoolCtrl.text,
-                            "grade-score": _gradeCtrl.text,
+                            "award-name": _awardCtrl.text,
+                            "year": _yearCtrl.text,
+                            "detail": _detailCtrl.text,
                           });
                           Navigator.pop(context);
                         },

@@ -4,10 +4,16 @@ class ContactInformationScreen extends StatefulWidget {
   const ContactInformationScreen({super.key});
 
   @override
-  State<ContactInformationScreen> createState() => _ContactInformationScreenState();
+  State<ContactInformationScreen> createState() =>
+      _ContactInformationScreenState();
 }
 
-class _ContactInformationScreenState extends State<ContactInformationScreen> {
+class _ContactInformationScreenState extends State<ContactInformationScreen>
+    with AutomaticKeepAliveClientMixin {
+
+  @override
+  bool get wantKeepAlive => true; // <<< giữ state khi đổi tab
+
   final _nameController = TextEditingController();
   final _addressController = TextEditingController();
   final _phoneController = TextEditingController();
@@ -24,12 +30,15 @@ class _ContactInformationScreenState extends State<ContactInformationScreen> {
         borderRadius: BorderRadius.circular(12),
         borderSide: const BorderSide(color: Colors.teal, width: 2),
       ),
-      contentPadding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
+      contentPadding:
+      const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context); // <<< BẮT BUỘC khi dùng KeepAlive
+
     return Scaffold(
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(18),
@@ -79,7 +88,10 @@ class _ContactInformationScreenState extends State<ContactInformationScreen> {
                 },
                 child: const Text(
                   "SAVE",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             ),

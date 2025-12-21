@@ -2,22 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'dart:convert';
 
-class ExperienceForm extends StatefulWidget {
+class ProjectForm extends StatefulWidget {
   final Map<String, dynamic>? data;
   final Function(Map<String, dynamic>) onSave;
 
-  const ExperienceForm({super.key, this.data, required this.onSave});
+  const ProjectForm({super.key, this.data, required this.onSave});
 
   @override
-  State<ExperienceForm> createState() => _ExperienceFormState();
+  State<ProjectForm> createState() => _ProjectFormState();
 }
 
-class _ExperienceFormState extends State<ExperienceForm> {
-  final _companyCtrl = TextEditingController();
-  final _titleCtrl = TextEditingController();
+class _ProjectFormState extends State<ProjectForm> {
+  final _projectCtrl = TextEditingController();
   final _fromCtrl = TextEditingController();
   final _toCtrl = TextEditingController();
-
+  final _roleCtrl = TextEditingController();
+  final _teamSizeCtrl = TextEditingController();
   // Quill controller cho rich text
   late QuillController _quillController;
   final FocusNode _focusNode = FocusNode();
@@ -28,10 +28,11 @@ class _ExperienceFormState extends State<ExperienceForm> {
 
     // Khởi tạo các text field thông thường
     if (widget.data != null) {
-      _companyCtrl.text = widget.data!["company"] ?? "";
-      _titleCtrl.text = widget.data!["title"] ?? "";
+      _projectCtrl.text = widget.data!["project-name"] ?? "";
       _fromCtrl.text = widget.data!["from"] ?? "";
       _toCtrl.text = widget.data!["to"] ?? "";
+      _roleCtrl.text = widget.data!["role"] ?? "";
+      _teamSizeCtrl.text = widget.data!["team-size"] ?? "";
     }
 
     // Khởi tạo Quill controller
@@ -55,10 +56,11 @@ class _ExperienceFormState extends State<ExperienceForm> {
 
   @override
   void dispose() {
-    _companyCtrl.dispose();
-    _titleCtrl.dispose();
+    _projectCtrl.dispose();
     _fromCtrl.dispose();
     _toCtrl.dispose();
+    _roleCtrl.dispose();
+    _teamSizeCtrl.dispose();
     _quillController.dispose();
     _focusNode.dispose();
     super.dispose();
@@ -69,7 +71,7 @@ class _ExperienceFormState extends State<ExperienceForm> {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
-        title: const Text("Experience Details"),
+        title: const Text("Project Details"),
         centerTitle: true,
         automaticallyImplyLeading: false,
       ),
@@ -83,14 +85,8 @@ class _ExperienceFormState extends State<ExperienceForm> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     TextField(
-                      controller: _companyCtrl,
-                      decoration: const InputDecoration(labelText: "Company Name"),
-                    ),
-                    const SizedBox(height: 12),
-
-                    TextField(
-                      controller: _titleCtrl,
-                      decoration: const InputDecoration(labelText: "Job Title"),
+                      controller: _projectCtrl,
+                      decoration: const InputDecoration(labelText: "Project Name"),
                     ),
                     const SizedBox(height: 12),
 
@@ -112,6 +108,18 @@ class _ExperienceFormState extends State<ExperienceForm> {
                       ],
                     ),
                     const SizedBox(height: 20),
+
+                    TextField(
+                      controller: _roleCtrl,
+                      decoration: const InputDecoration(labelText: "Role"),
+                    ),
+                    const SizedBox(height: 12),
+
+                    TextField(
+                      controller: _teamSizeCtrl,
+                      decoration: const InputDecoration(labelText: "Team Size"),
+                    ),
+                    const SizedBox(height: 12),
 
                     const Text(
                       "Details",
@@ -226,10 +234,11 @@ class _ExperienceFormState extends State<ExperienceForm> {
                           );
 
                           widget.onSave({
-                            "company": _companyCtrl.text,
-                            "title": _titleCtrl.text,
+                            "project-name": _projectCtrl.text,
                             "from": _fromCtrl.text,
                             "to": _toCtrl.text,
+                            "role": _roleCtrl.text,
+                            "team-size": _teamSizeCtrl.text,
                             "details": deltaJson, // Lưu dưới dạng JSON
                           });
                           Navigator.pop(context);

@@ -42,7 +42,7 @@ class _ExperienceInformationScreenState
 
   @override
   Widget build(BuildContext context) {
-    super.build(context); // bắt buộc khi dùng KeepAlive
+    super.build(context);
 
     return Scaffold(
       body: Padding(
