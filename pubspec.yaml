@@ -36,6 +36,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   flutter_exit_app: ^2.0.0
   flutter_quill: ^11.5.0
+  path_provider: ^2.1.5
 dev_dependencies:
   flutter_launcher_icons: ^0.14.4
   flutter_test:

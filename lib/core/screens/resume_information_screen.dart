@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:resume_builder_project/core/screens/home_screen.dart';
 import 'package:resume_builder_project/core/screens/resume_information_tabs/activity_information_screen.dart';
 import 'package:resume_builder_project/core/screens/resume_information_tabs/award_information_screen.dart';
 import 'package:resume_builder_project/core/screens/resume_information_tabs/certification_information_screen.dart';
@@ -14,10 +15,16 @@ import 'package:resume_builder_project/core/screens/resume_information_tabs/refe
 import 'package:resume_builder_project/core/screens/resume_information_tabs/skill_information_screen.dart';
 
 class ResumeInformationScreen extends StatefulWidget {
-  const ResumeInformationScreen({super.key});
+  final Map<String, dynamic> resume;
+
+  const ResumeInformationScreen({
+    super.key,
+    required this.resume,
+  });
 
   @override
-  State<ResumeInformationScreen> createState() => _ResumeInformationScreenState();
+  State<ResumeInformationScreen> createState() =>
+      _ResumeInformationScreenState();
 }
 
 class _ResumeInformationScreenState extends State<ResumeInformationScreen>
@@ -61,7 +68,7 @@ class _ResumeInformationScreenState extends State<ResumeInformationScreen>
       offset += _estimateTabWidth(tabs[i]);
     }
 
-    final double currentWidth = _estimateTabWidth(tabs[index]);
+    final currentWidth = _estimateTabWidth(tabs[index]);
     final screenWidth = MediaQuery.of(context).size.width;
 
     final targetOffset = offset - (screenWidth / 2) + (currentWidth / 2);
@@ -84,57 +91,52 @@ class _ResumeInformationScreenState extends State<ResumeInformationScreen>
 
   @override
   Widget build(BuildContext context) {
+    final resumeName = widget.resume['name'] ?? 'Resume';
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-            "Resume Information",
-            style: TextStyle(fontSize:24, color: Colors.white)
+        title: Text(
+          resumeName,
+          style: const TextStyle(
+            fontSize: 22,
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+          overflow: TextOverflow.ellipsis,
         ),
         backgroundColor: Colors.teal,
         leading: IconButton(
-          icon: const Icon(
-              Icons.arrow_back,
-              color: Colors.white
-          ),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const HomeScreen(),
+              ),
+            );
           },
         ),
       ),
       body: Column(
         children: [
-
           /// TAB CONTENT
           Expanded(
             child: TabBarView(
               controller: _tabController,
-              children: [
-                // Tab 1: Contact
-                const ContactInformationScreen(),
-                // Tab 2: Education
-                const EducationInformationScreen(),
-                // Tab 3: Experience
-                const ExperienceInformationScreen(),
-                // Tab 4: Project
-                const ProjectInformationScreen(),
-                // Tab 5: Skill
-                const SkillInformationScreen(),
-                // Tab 6: Award
-                const AwardInformationScreen(),
-                // Tab 7: Activity
-                const ActivityInformationScreen(),
-                // Tab 8: Certification
-                const CertificationInformationScreen(),
-                // Tab 9: Reference
-                const ReferenceInformationScreen(),
-                // Tab 10: Objective
-                const ObjectiveInformationScreen(),
-                // Tab 11: Cover Letter
-                const CoverLetterInformationScreen(),
-                // Tab 12: Photo - Sign
-                const PhotoSignInformationScreen(),
-                // Tab 13: Preview
-                const PreviewScreen(),
+              children: const [
+                ContactInformationScreen(),
+                EducationInformationScreen(),
+                ExperienceInformationScreen(),
+                ProjectInformationScreen(),
+                SkillInformationScreen(),
+                AwardInformationScreen(),
+                ActivityInformationScreen(),
+                CertificationInformationScreen(),
+                ReferenceInformationScreen(),
+                ObjectiveInformationScreen(),
+                CoverLetterInformationScreen(),
+                PhotoSignInformationScreen(),
+                PreviewScreen(),
               ],
             ),
           ),
@@ -169,7 +171,8 @@ class _ResumeInformationScreenState extends State<ResumeInformationScreen>
                       child: Text(
                         tabs[index],
                         style: TextStyle(
-                          color: isSelected ? Colors.white : Colors.black,
+                          color:
+                          isSelected ? Colors.white : Colors.black,
                           fontWeight: isSelected
                               ? FontWeight.bold
                               : FontWeight.normal,
@@ -182,7 +185,7 @@ class _ResumeInformationScreenState extends State<ResumeInformationScreen>
             ),
           ),
 
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
         ],
       ),
     );

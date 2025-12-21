@@ -4,6 +4,7 @@ import 'package:resume_builder_project/core/screens/add_resume_builder_screen.da
 import 'package:resume_builder_project/core/utils/app_utils.dart';
 import '../../services/notifications_repository.dart';
 import '../widgets/app_drawer.dart';
+import '../widgets/resume_list_view.dart';
 import 'download_screen.dart';
 import 'notifications_screen.dart';
 
@@ -15,15 +16,13 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  // Hàm confirm thoát
-
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        bool ok = await AppUtils.confirmExit(context);
+        final ok = await AppUtils.confirmExit(context);
         if (ok) SystemNavigator.pop();
-        return false; // chặn back mặc định
+        return false;
       },
       child: Scaffold(
         appBar: AppBar(
@@ -50,24 +49,23 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               },
             ),
-
-            // badge notification
-            ValueListenableBuilder<List<NotificationItem>>(
+            ValueListenableBuilder(
               valueListenable: NotificationsRepository.notifications,
               builder: (context, list, _) {
-                final int unread =
+                final unread =
                     list.where((x) => !(x.isRead ?? false)).length;
 
                 return Stack(
-                  clipBehavior: Clip.none,
                   children: [
                     IconButton(
-                      icon: const Icon(Icons.notifications, color: Colors.white),
+                      icon: const Icon(Icons.notifications,
+                          color: Colors.white),
                       onPressed: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (_) => const NotificationScreen()),
+                            builder: (_) => const NotificationScreen(),
+                          ),
                         );
                       },
                     ),
@@ -82,19 +80,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             color: Colors.red,
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          constraints: const BoxConstraints(
-                            minWidth: 18,
-                            minHeight: 18,
-                          ),
-                          child: Center(
-                            child: Text(
-                              unread > 9 ? '9+' : unread.toString(),
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 11,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
+                          child: Text(
+                            unread > 9 ? "9+" : unread.toString(),
+                            style: const TextStyle(
+                                color: Colors.white, fontSize: 11),
                           ),
                         ),
                       ),
@@ -107,17 +96,20 @@ class _HomeScreenState extends State<HomeScreen> {
 
         drawer: const AppDrawer(),
 
+        // 👉 CV LIST
+        body: const ResumeListView(),
+
         floatingActionButton: FloatingActionButton(
+          backgroundColor: Colors.teal,
+          child: const Icon(Icons.add, color: Colors.white),
           onPressed: () {
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (_) => const AddResumeBuilderScreen()),
+                builder: (_) => const AddResumeBuilderScreen(),
+              ),
             );
           },
-          shape: const CircleBorder(),
-          backgroundColor: Colors.teal,
-          child: const Icon(Icons.add, color: Colors.white),
         ),
       ),
     );
