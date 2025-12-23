@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
+import '../../services/resume_storage.dart';
 import 'package:resume_builder_project/core/utils/app_utils.dart';
 import '../../widgets/add_item_card.dart';
 import 'form/reference_form.dart';
 
 class ReferenceInformationScreen extends StatefulWidget {
-  const ReferenceInformationScreen({super.key});
+  final Map<String, dynamic> resume;
+
+  const ReferenceInformationScreen({
+    super.key,
+    required this.resume,
+  });
 
   @override
   State<ReferenceInformationScreen> createState() =>
@@ -16,9 +22,36 @@ class _ReferenceInformationScreenState
     with AutomaticKeepAliveClientMixin {
 
   @override
-  bool get wantKeepAlive => true; // giữ state
+  bool get wantKeepAlive => true;
 
   List<Map<String, dynamic>> educations = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+
+  Future<void> _loadData() async {
+    final data = await ResumeStorage.loadData(
+      resume: widget.resume,
+      key: 'references',
+    );
+
+    if (data is List) {
+      setState(() {
+        educations = List<Map<String, dynamic>>.from(data);
+      });
+    }
+  }
+
+  Future<void> _saveData() async {
+    await ResumeStorage.saveData(
+      resume: widget.resume,
+      key: 'references',
+      value: educations,
+    );
+  }
 
   void _openForm({Map<String, dynamic>? data, int? index}) {
     Navigator.push(
@@ -34,6 +67,7 @@ class _ReferenceInformationScreenState
                 educations.add(info);
               }
             });
+            _saveData();
           },
         ),
       ),
@@ -49,7 +83,6 @@ class _ReferenceInformationScreenState
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            // Nếu chưa có → show nút add ở giữa
             if (educations.isEmpty)
               Expanded(
                 child: Center(
@@ -60,7 +93,6 @@ class _ReferenceInformationScreenState
                 ),
               ),
 
-            // Nếu đã có → show list + nút add ở dưới
             if (educations.isNotEmpty)
               Expanded(
                 child: ListView(
@@ -75,21 +107,21 @@ class _ReferenceInformationScreenState
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              // EDIT
                               IconButton(
                                 icon: const Icon(Icons.edit),
-                                onPressed: () => _openForm(data: exp, index: i),
+                                onPressed: () =>
+                                    _openForm(data: exp, index: i),
                               ),
-
-                              // DELETE + confirm
                               IconButton(
                                 icon: const Icon(Icons.delete, color: Colors.red),
                                 onPressed: () async {
-                                  final ok = await AppUtils.confirmDelete(context);
+                                  final ok =
+                                  await AppUtils.confirmDelete(context);
                                   if (ok) {
                                     setState(() {
                                       educations.removeAt(i);
                                     });
+                                    _saveData();
                                   }
                                 },
                               ),
@@ -98,9 +130,7 @@ class _ReferenceInformationScreenState
                         ),
                       );
                     }),
-
                     const SizedBox(height: 12),
-
                     Center(
                       child: AddItemCard(
                         title: "Reference",

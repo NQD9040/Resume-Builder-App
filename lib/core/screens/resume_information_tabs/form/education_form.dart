@@ -4,7 +4,11 @@ class EducationForm extends StatefulWidget {
   final Map<String, dynamic>? data;
   final Function(Map<String, dynamic>) onSave;
 
-  const EducationForm({super.key, this.data, required this.onSave});
+  const EducationForm({
+    super.key,
+    this.data,
+    required this.onSave,
+  });
 
   @override
   State<EducationForm> createState() => _EducationFormState();
@@ -21,7 +25,6 @@ class _EducationFormState extends State<EducationForm> {
   void initState() {
     super.initState();
 
-    // Khởi tạo các text field thông thường
     if (widget.data != null) {
       _courseCtrl.text = widget.data!["course-degree"] ?? "";
       _fromCtrl.text = widget.data!["from"] ?? "";
@@ -44,90 +47,74 @@ class _EducationFormState extends State<EducationForm> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         title: const Text("Education Details"),
         centerTitle: true,
-        automaticallyImplyLeading: false,
       ),
-      body: SafeArea(
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    TextField(
-                      controller: _courseCtrl,
-                      decoration: const InputDecoration(labelText: "Course / Degree"),
-                    ),
-                    const SizedBox(height: 12),
+            TextField(
+              controller: _courseCtrl,
+              decoration:
+              const InputDecoration(labelText: "Course / Degree"),
+            ),
+            const SizedBox(height: 12),
 
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            controller: _fromCtrl,
-                            decoration: const InputDecoration(labelText: "From"),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: TextField(
-                            controller: _toCtrl,
-                            decoration: const InputDecoration(labelText: "To"),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 20),
-                    TextField(
-                      controller: _schoolCtrl,
-                      decoration: const InputDecoration(labelText: "School / University"),
-                    ),
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _fromCtrl,
+                    decoration: const InputDecoration(labelText: "From"),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: TextField(
+                    controller: _toCtrl,
+                    decoration: const InputDecoration(labelText: "To"),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
 
-                    const SizedBox(height: 20),
-                    TextField(
-                      controller: _gradeCtrl,
-                      decoration: const InputDecoration(labelText: "Grade / Score"),
-                    ),
-                    const SizedBox(height: 30),
+            TextField(
+              controller: _schoolCtrl,
+              decoration:
+              const InputDecoration(labelText: "School / University"),
+            ),
+            const SizedBox(height: 20),
 
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.teal,
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        onPressed: () {
-                          widget.onSave({
-                            "course-degree": _courseCtrl.text,
-                            "from": _fromCtrl.text,
-                            "to": _toCtrl.text,
-                            "school-university": _schoolCtrl.text,
-                            "grade-score": _gradeCtrl.text,
-                          });
-                          Navigator.pop(context);
-                        },
-                        child: const Text(
-                          "SAVE",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
+            TextField(
+              controller: _gradeCtrl,
+              decoration:
+              const InputDecoration(labelText: "Grade / Score"),
+            ),
+            const SizedBox(height: 30),
 
-                    const SizedBox(height: 20),
-                  ],
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.teal,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                ),
+                onPressed: () {
+                  widget.onSave({
+                    "course-degree": _courseCtrl.text,
+                    "from": _fromCtrl.text,
+                    "to": _toCtrl.text,
+                    "school-university": _schoolCtrl.text,
+                    "grade-score": _gradeCtrl.text,
+                  });
+                  Navigator.pop(context);
+                },
+                child: const Text(
+                  "SAVE",
+                  style: TextStyle(color: Colors.white),
                 ),
               ),
             ),

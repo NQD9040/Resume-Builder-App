@@ -2,9 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:resume_builder_project/core/utils/app_utils.dart';
 import '../../widgets/add_item_card.dart';
 import 'form/award_form.dart';
+import '../../services/resume_storage.dart';
 
 class AwardInformationScreen extends StatefulWidget {
-  const AwardInformationScreen({super.key});
+  final Map<String, dynamic> resume;
+
+  const AwardInformationScreen({
+    super.key,
+    required this.resume,
+  });
 
   @override
   State<AwardInformationScreen> createState() =>
@@ -14,26 +20,59 @@ class AwardInformationScreen extends StatefulWidget {
 class _AwardInformationScreenState
     extends State<AwardInformationScreen>
     with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
+  List<Map<String, dynamic>> awards = [];
 
   @override
-  bool get wantKeepAlive => true; // giữ state
+  void initState() {
+    super.initState();
+    _loadAwards();
+  }
 
-  List<Map<String, dynamic>> educations = [];
+  // ===== LOAD =====
+  Future<void> _loadAwards() async {
+    final data = await ResumeStorage.loadData(
+      resume: widget.resume,
+      key: "award",
+    );
 
+    if (data is List) {
+      awards = data.map<Map<String, dynamic>>(
+            (e) => Map<String, dynamic>.from(e),
+      ).toList();
+    }
+
+    setState(() {});
+  }
+
+  // ===== SAVE =====
+  Future<void> _saveAwards() async {
+    await ResumeStorage.saveData(
+      resume: widget.resume,
+      key: "award",
+      value: awards,
+    );
+  }
+
+  // ===== OPEN FORM =====
   void _openForm({Map<String, dynamic>? data, int? index}) {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (_) => AwardForm(
           data: data,
-          onSave: (info) {
+          onSave: (info) async {
             setState(() {
               if (index != null) {
-                educations[index] = info;
+                awards[index] = info;
               } else {
-                educations.add(info);
+                awards.add(info);
               }
             });
+
+            await _saveAwards();
           },
         ),
       ),
@@ -42,15 +81,15 @@ class _AwardInformationScreenState
 
   @override
   Widget build(BuildContext context) {
-    super.build(context); // bắt buộc khi dùng KeepAlive
+    super.build(context);
 
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            // Nếu chưa có → show nút add ở giữa
-            if (educations.isEmpty)
+            // ===== EMPTY =====
+            if (awards.isEmpty)
               Expanded(
                 child: Center(
                   child: AddItemCard(
@@ -60,37 +99,44 @@ class _AwardInformationScreenState
                 ),
               ),
 
-            // Nếu đã có → show list + nút add ở dưới
-            if (educations.isNotEmpty)
+            // ===== LIST =====
+            if (awards.isNotEmpty)
               Expanded(
                 child: ListView(
                   children: [
-                    ...List.generate(educations.length, (i) {
-                      final exp = educations[i];
+                    ...List.generate(awards.length, (i) {
+                      final aw = awards[i];
 
                       return Card(
                         child: ListTile(
-                          title: Text(exp["award-name"] ?? ""),
-                          subtitle: Text(exp["year"] ?? ""),
+                          title: Text(aw["award-name"] ?? ""),
+                          subtitle: Text(aw["year"] ?? ""),
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               // EDIT
                               IconButton(
                                 icon: const Icon(Icons.edit),
-                                onPressed: () => _openForm(data: exp, index: i),
+                                onPressed: () =>
+                                    _openForm(data: aw, index: i),
                               ),
 
-                              // DELETE + confirm
+                              // DELETE
                               IconButton(
-                                icon: const Icon(Icons.delete, color: Colors.red),
+                                icon: const Icon(
+                                  Icons.delete,
+                                  color: Colors.red,
+                                ),
                                 onPressed: () async {
-                                  final ok = await AppUtils.confirmDelete(context);
-                                  if (ok) {
-                                    setState(() {
-                                      educations.removeAt(i);
-                                    });
-                                  }
+                                  final ok =
+                                  await AppUtils.confirmDelete(context);
+                                  if (!ok) return;
+
+                                  setState(() {
+                                    awards.removeAt(i);
+                                  });
+
+                                  await _saveAwards();
                                 },
                               ),
                             ],

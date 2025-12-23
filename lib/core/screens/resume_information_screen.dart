@@ -1,4 +1,8 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:resume_builder_project/core/screens/home_screen.dart';
 import 'package:resume_builder_project/core/screens/resume_information_tabs/activity_information_screen.dart';
 import 'package:resume_builder_project/core/screens/resume_information_tabs/award_information_screen.dart';
@@ -88,6 +92,26 @@ class _ResumeInformationScreenState extends State<ResumeInformationScreen>
     final textWidth = text.length * 8.0;
     return textWidth + basePadding;
   }
+  Future<void> _saveResumeToFile() async {
+    final dir = await getApplicationDocumentsDirectory();
+    final file = File('${dir.path}/resumes_info.json');
+
+    final content = await file.readAsString();
+    final List data = jsonDecode(content);
+
+    final index = data.indexWhere(
+          (e) =>
+      e["name"] == widget.resume["name"] &&
+          e["createdAt"] == widget.resume["createdAt"],
+    );
+
+    if (index != -1) {
+      data[index] = widget.resume;
+      await file.writeAsString(
+        const JsonEncoder.withIndent('  ').convert(data),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -123,16 +147,19 @@ class _ResumeInformationScreenState extends State<ResumeInformationScreen>
           Expanded(
             child: TabBarView(
               controller: _tabController,
-              children: const [
-                ContactInformationScreen(),
-                EducationInformationScreen(),
-                ExperienceInformationScreen(),
-                ProjectInformationScreen(),
-                SkillInformationScreen(),
-                AwardInformationScreen(),
-                ActivityInformationScreen(),
-                CertificationInformationScreen(),
-                ReferenceInformationScreen(),
+              children: [
+                ContactInformationScreen(
+                  resume: widget.resume,
+                  onSave: _saveResumeToFile,
+                ),
+                EducationInformationScreen(resume: widget.resume),
+                ExperienceInformationScreen(resume: widget.resume),
+                ProjectInformationScreen(resume: widget.resume),
+                SkillInformationScreen(resume: widget.resume),
+                AwardInformationScreen(resume: widget.resume),
+                ActivityInformationScreen(resume: widget.resume),
+                CertificationInformationScreen(resume: widget.resume),
+                ReferenceInformationScreen(resume: widget.resume),
                 ObjectiveInformationScreen(),
                 CoverLetterInformationScreen(),
                 PhotoSignInformationScreen(),

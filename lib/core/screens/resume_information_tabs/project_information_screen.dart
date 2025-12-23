@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:resume_builder_project/core/screens/resume_information_tabs/form/project_form.dart';
 import 'package:resume_builder_project/core/utils/app_utils.dart';
+import '../../services/resume_storage.dart';
 import '../../widgets/add_item_card.dart';
 
 class ProjectInformationScreen extends StatefulWidget {
-  const ProjectInformationScreen({super.key});
+  final Map<String, dynamic> resume;
+
+  const ProjectInformationScreen({
+    super.key,
+    required this.resume,
+  });
 
   @override
   State<ProjectInformationScreen> createState() =>
@@ -14,26 +20,57 @@ class ProjectInformationScreen extends StatefulWidget {
 class _ProjectInformationScreenState
     extends State<ProjectInformationScreen>
     with AutomaticKeepAliveClientMixin {
-
   @override
-  bool get wantKeepAlive => true; // giữ state
+  bool get wantKeepAlive => true;
 
-  List<Map<String, dynamic>> experiences = [];
+  List<Map<String, dynamic>> projects = [];
 
+  // ===== LOAD =====
+  @override
+  void initState() {
+    super.initState();
+    _loadProjects();
+  }
+
+  Future<void> _loadProjects() async {
+    final raw = await ResumeStorage.loadData(
+      resume: widget.resume,
+      key: "project",
+    );
+
+    if (raw is List) {
+      setState(() {
+        projects = List<Map<String, dynamic>>.from(raw);
+      });
+    }
+  }
+
+  // ===== SAVE =====
+  Future<void> _saveProjects() async {
+    await ResumeStorage.saveData(
+      resume: widget.resume,
+      key: "project",
+      value: projects,
+    );
+  }
+
+  // ===== OPEN FORM =====
   void _openForm({Map<String, dynamic>? data, int? index}) {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (_) => ProjectForm(
           data: data,
-          onSave: (info) {
+          onSave: (info) async {
             setState(() {
               if (index != null) {
-                experiences[index] = info;
+                projects[index] = info;
               } else {
-                experiences.add(info);
+                projects.add(info);
               }
             });
+
+            await _saveProjects();
           },
         ),
       ),
@@ -42,15 +79,14 @@ class _ProjectInformationScreenState
 
   @override
   Widget build(BuildContext context) {
-    super.build(context); // bắt buộc khi dùng KeepAlive
+    super.build(context);
 
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            // Nếu chưa có → show nút add ở giữa
-            if (experiences.isEmpty)
+            if (projects.isEmpty)
               Expanded(
                 child: Center(
                   child: AddItemCard(
@@ -60,36 +96,38 @@ class _ProjectInformationScreenState
                 ),
               ),
 
-            // Nếu đã có → show list + nút add ở dưới
-            if (experiences.isNotEmpty)
+            if (projects.isNotEmpty)
               Expanded(
                 child: ListView(
                   children: [
-                    ...List.generate(experiences.length, (i) {
-                      final exp = experiences[i];
+                    ...List.generate(projects.length, (i) {
+                      final p = projects[i];
 
                       return Card(
                         child: ListTile(
-                          title: Text(exp["project-name"] ?? ""),
-                          subtitle: Text(exp["role"] ?? ""),
+                          title: Text(p["project-name"] ?? ""),
+                          subtitle: Text(p["role"] ?? ""),
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              // EDIT
                               IconButton(
                                 icon: const Icon(Icons.edit),
-                                onPressed: () => _openForm(data: exp, index: i),
+                                onPressed: () =>
+                                    _openForm(data: p, index: i),
                               ),
-
-                              // DELETE + confirm
                               IconButton(
-                                icon: const Icon(Icons.delete, color: Colors.red),
+                                icon: const Icon(
+                                  Icons.delete,
+                                  color: Colors.red,
+                                ),
                                 onPressed: () async {
-                                  final ok = await AppUtils.confirmDelete(context);
+                                  final ok =
+                                  await AppUtils.confirmDelete(context);
                                   if (ok) {
                                     setState(() {
-                                      experiences.removeAt(i); // FIX BUG HERE
+                                      projects.removeAt(i);
                                     });
+                                    await _saveProjects();
                                   }
                                 },
                               ),

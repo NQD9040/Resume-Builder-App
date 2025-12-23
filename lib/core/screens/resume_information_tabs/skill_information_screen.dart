@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:resume_builder_project/core/utils/app_utils.dart';
+import '../../services/resume_storage.dart';
 import '../../widgets/add_item_card.dart';
 import 'form/skill_form.dart';
 
 class SkillInformationScreen extends StatefulWidget {
-  const SkillInformationScreen({super.key});
+  final Map<String, dynamic> resume;
+
+  const SkillInformationScreen({
+    super.key,
+    required this.resume,
+  });
 
   @override
   State<SkillInformationScreen> createState() =>
@@ -13,10 +19,42 @@ class SkillInformationScreen extends StatefulWidget {
 
 class _SkillInformationScreenState extends State<SkillInformationScreen>
     with AutomaticKeepAliveClientMixin {
+
   @override
   bool get wantKeepAlive => true;
 
   List<Map<String, dynamic>> skills = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSkills();
+  }
+
+  // ===== LOAD =====
+  Future<void> _loadSkills() async {
+    final data = await ResumeStorage.loadData(
+      resume: widget.resume,
+      key: "skills",
+    );
+
+    if (data != null && data is List) {
+      setState(() {
+        skills = List<Map<String, dynamic>>.from(
+          data.map((e) => Map<String, dynamic>.from(e)),
+        );
+      });
+    }
+  }
+
+  // ===== SAVE =====
+  Future<void> _saveSkills() async {
+    await ResumeStorage.saveData(
+      resume: widget.resume,
+      key: "skills",
+      value: skills,
+    );
+  }
 
   void _openForm({Map<String, dynamic>? data, int? index}) {
     Navigator.push(
@@ -24,7 +62,7 @@ class _SkillInformationScreenState extends State<SkillInformationScreen>
       MaterialPageRoute(
         builder: (_) => SkillForm(
           data: data,
-          onSave: (info) {
+          onSave: (info) async {
             setState(() {
               if (index != null) {
                 skills[index] = info;
@@ -32,6 +70,7 @@ class _SkillInformationScreenState extends State<SkillInformationScreen>
                 skills.add(info);
               }
             });
+            await _saveSkills();
           },
         ),
       ),
@@ -47,7 +86,6 @@ class _SkillInformationScreenState extends State<SkillInformationScreen>
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            // CHƯA CÓ SKILL → SHOW ADD Ở GIỮA
             if (skills.isEmpty)
               Expanded(
                 child: Center(
@@ -58,7 +96,6 @@ class _SkillInformationScreenState extends State<SkillInformationScreen>
                 ),
               ),
 
-            // CÓ SKILL → SHOW LIST
             if (skills.isNotEmpty)
               Expanded(
                 child: ListView(
@@ -72,8 +109,8 @@ class _SkillInformationScreenState extends State<SkillInformationScreen>
                           subtitle: Row(
                             children: List.generate(
                               5,
-                                  (index) => Icon(
-                                index < (sk["rating"] ?? 0)
+                                  (idx) => Icon(
+                                idx < (sk["rating"] ?? 0)
                                     ? Icons.star
                                     : Icons.star_border,
                                 color: Colors.amber,
@@ -84,16 +121,16 @@ class _SkillInformationScreenState extends State<SkillInformationScreen>
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              // EDIT
                               IconButton(
                                 icon: const Icon(Icons.edit),
                                 onPressed: () =>
                                     _openForm(data: sk, index: i),
                               ),
-
-                              // DELETE
                               IconButton(
-                                icon: const Icon(Icons.delete, color: Colors.red),
+                                icon: const Icon(
+                                  Icons.delete,
+                                  color: Colors.red,
+                                ),
                                 onPressed: () async {
                                   final ok =
                                   await AppUtils.confirmDelete(context);
@@ -101,6 +138,7 @@ class _SkillInformationScreenState extends State<SkillInformationScreen>
                                     setState(() {
                                       skills.removeAt(i);
                                     });
+                                    await _saveSkills();
                                   }
                                 },
                               ),
@@ -109,10 +147,7 @@ class _SkillInformationScreenState extends State<SkillInformationScreen>
                         ),
                       );
                     }),
-
                     const SizedBox(height: 12),
-
-                    // ADD BUTTON CUỐI LIST
                     Center(
                       child: AddItemCard(
                         title: "Skill",

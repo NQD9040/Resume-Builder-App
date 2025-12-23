@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:resume_builder_project/core/utils/app_utils.dart';
+import '../../services/resume_storage.dart';
 import '../../widgets/add_item_card.dart';
 import 'form/education_form.dart';
 
 class EducationInformationScreen extends StatefulWidget {
-  const EducationInformationScreen({super.key});
+  final Map<String, dynamic> resume;
+
+  const EducationInformationScreen({
+    super.key,
+    required this.resume,
+  });
 
   @override
   State<EducationInformationScreen> createState() =>
@@ -16,17 +22,45 @@ class _EducationInformationScreenState
     with AutomaticKeepAliveClientMixin {
 
   @override
-  bool get wantKeepAlive => true; // giữ state
+  bool get wantKeepAlive => true;
 
   List<Map<String, dynamic>> educations = [];
 
+  @override
+  void initState() {
+    super.initState();
+    _loadEducation();
+  }
+
+  Future<void> _loadEducation() async {
+    final raw = await ResumeStorage.loadData(
+      resume: widget.resume,
+      key: "education",
+    );
+
+    setState(() {
+      educations = List<Map<String, dynamic>>.from(
+        raw as List,
+      );
+    });
+  }
+
+  Future<void> _saveEducation() async {
+    await ResumeStorage.saveData(
+      resume: widget.resume,
+      key: "education",
+      value: educations,
+    );
+  }
+
+  // ===== OPEN FORM =====
   void _openForm({Map<String, dynamic>? data, int? index}) {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (_) => EducationForm(
           data: data,
-          onSave: (info) {
+          onSave: (info) async {
             setState(() {
               if (index != null) {
                 educations[index] = info;
@@ -34,6 +68,8 @@ class _EducationInformationScreenState
                 educations.add(info);
               }
             });
+
+            await _saveEducation();
           },
         ),
       ),
@@ -42,14 +78,13 @@ class _EducationInformationScreenState
 
   @override
   Widget build(BuildContext context) {
-    super.build(context); // bắt buộc khi dùng KeepAlive
+    super.build(context);
 
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            // Nếu chưa có → show nút add ở giữa
             if (educations.isEmpty)
               Expanded(
                 child: Center(
@@ -60,36 +95,35 @@ class _EducationInformationScreenState
                 ),
               ),
 
-            // Nếu đã có → show list + nút add ở dưới
             if (educations.isNotEmpty)
               Expanded(
                 child: ListView(
                   children: [
                     ...List.generate(educations.length, (i) {
-                      final exp = educations[i];
+                      final edu = educations[i];
 
                       return Card(
                         child: ListTile(
-                          title: Text(exp["course-degree"] ?? ""),
-                          subtitle: Text(exp["school-university"] ?? ""),
+                          title: Text(edu["course-degree"] ?? ""),
+                          subtitle: Text(edu["school-university"] ?? ""),
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              // EDIT
                               IconButton(
                                 icon: const Icon(Icons.edit),
-                                onPressed: () => _openForm(data: exp, index: i),
+                                onPressed: () =>
+                                    _openForm(data: edu, index: i),
                               ),
-
-                              // DELETE + confirm
                               IconButton(
                                 icon: const Icon(Icons.delete, color: Colors.red),
                                 onPressed: () async {
-                                  final ok = await AppUtils.confirmDelete(context);
+                                  final ok =
+                                  await AppUtils.confirmDelete(context);
                                   if (ok) {
                                     setState(() {
                                       educations.removeAt(i);
                                     });
+                                    await _saveEducation();
                                   }
                                 },
                               ),
@@ -98,9 +132,7 @@ class _EducationInformationScreenState
                         ),
                       );
                     }),
-
                     const SizedBox(height: 12),
-
                     Center(
                       child: AddItemCard(
                         title: "Education",

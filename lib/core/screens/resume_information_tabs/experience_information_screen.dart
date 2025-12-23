@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:resume_builder_project/core/utils/app_utils.dart';
+import '../../services/resume_storage.dart';
 import '../../widgets/add_item_card.dart';
 import 'form/experience_form.dart';
 
 class ExperienceInformationScreen extends StatefulWidget {
-  const ExperienceInformationScreen({super.key});
+  final Map<String, dynamic> resume;
+
+  const ExperienceInformationScreen({
+    super.key,
+    required this.resume,
+  });
 
   @override
   State<ExperienceInformationScreen> createState() =>
@@ -16,9 +22,36 @@ class _ExperienceInformationScreenState
     with AutomaticKeepAliveClientMixin {
 
   @override
-  bool get wantKeepAlive => true; // giữ state
+  bool get wantKeepAlive => true;
 
   List<Map<String, dynamic>> experiences = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+
+  Future<void> _loadData() async {
+    final raw = await ResumeStorage.loadData(
+      resume: widget.resume,
+      key: "experiences",
+    );
+
+    if (raw is List) {
+      setState(() {
+        experiences = List<Map<String, dynamic>>.from(raw);
+      });
+    }
+  }
+
+  Future<void> _saveData() async {
+    await ResumeStorage.saveData(
+      resume: widget.resume,
+      key: "experiences",
+      value: experiences,
+    );
+  }
 
   void _openForm({Map<String, dynamic>? data, int? index}) {
     Navigator.push(
@@ -34,6 +67,7 @@ class _ExperienceInformationScreenState
                 experiences.add(info);
               }
             });
+            _saveData();
           },
         ),
       ),
@@ -49,7 +83,6 @@ class _ExperienceInformationScreenState
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            // Nếu chưa có → show nút add ở giữa
             if (experiences.isEmpty)
               Expanded(
                 child: Center(
@@ -60,7 +93,6 @@ class _ExperienceInformationScreenState
                 ),
               ),
 
-            // Nếu đã có → show list + nút add ở dưới
             if (experiences.isNotEmpty)
               Expanded(
                 child: ListView(
@@ -75,21 +107,21 @@ class _ExperienceInformationScreenState
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              // EDIT
                               IconButton(
                                 icon: const Icon(Icons.edit),
-                                onPressed: () => _openForm(data: exp, index: i),
+                                onPressed: () =>
+                                    _openForm(data: exp, index: i),
                               ),
-
-                              // DELETE + confirm
                               IconButton(
                                 icon: const Icon(Icons.delete, color: Colors.red),
                                 onPressed: () async {
-                                  final ok = await AppUtils.confirmDelete(context);
+                                  final ok =
+                                  await AppUtils.confirmDelete(context);
                                   if (ok) {
                                     setState(() {
-                                      experiences.removeAt(i); // FIX BUG HERE
+                                      experiences.removeAt(i);
                                     });
+                                    _saveData();
                                   }
                                 },
                               ),
@@ -98,9 +130,7 @@ class _ExperienceInformationScreenState
                         ),
                       );
                     }),
-
                     const SizedBox(height: 12),
-
                     Center(
                       child: AddItemCard(
                         title: "Experience",
