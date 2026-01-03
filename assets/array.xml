@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="objective_array">
+        <item>I am a highly driven recent business school graduate seeking a full-time position in finance where I can lend my knowledge of market analytics to help your organization improve profitability.</item>
+        <item>I seek challenging opportunities where I can fully use my skills for the success of the organization.</item>
+        <item>Dedicated and experienced accounting professional with proven success managing finances for mid-size commercial organizations. Seeking an opportunity to use my decade of experience to serve the state government.</item>
+        <item>I am an experienced software developer relocating to San Francisco in August and seeking employment with a fast-growing startup. I bring more than eight years experience writing JavaScript and more than ten years experience in the technology industry.</item>
+        <item>As a public educator with nearly two decades of experience in K–12, I am seeking the opportunity to serve as a high school principal in my local community. I am eager to use my proven leadership skills to continue the district’s legacy of quality education and help prepare students for future success.</item>
+        <item>Energetic community outreach manager experienced in creating and completing outreach programs in urban communities.</item>
+        <item>To work in an environment which encourages me to succeed and grow professionally where I can utilize my skills and knowledge appropriately.</item>
+        <item>To enhance my professional skills, capabilities and knowledge in an organization which recognizes the value of hard work and trusts me with responsibilities and challenges.</item>
+        <item>As a recent graduate, I am seeking a role which allows me to continue learning and perfecting my skills as I provide high-quality work, and encourages me to flourish as a network technician.
+        </item>
+        <item>Multi-faceted, efficient, and reliable administrative professional with 10+ years of experience supporting executives, sales personnel, and managers to improve internal operations for small businesses.
+        </item>
+        <item>I am looking for a challenging job with a rapidly growing organization that can provide me with a range of goals and job objectives within a contemporary and economical business setting.
+        </item>
+        <item>Elementary education teacher looking for a position at a small independent school, where I can apply my five years of teaching experience and my curriculum development skills.
+        </item>
+        <item>To utilize my technical skills and provide a professional service to customers by applying and honing my knowledge and working in a challenging and motivating working environment.
+        </item>
+        <item>Vigorous housekeeping supervisor with 5+ years of experience and proven skills in daily and deep cleaning. Seeking job with Hyatt Hotels. Directed six housekeeping staff at Marriott Courtyard and increased positive customer comments by 38%. Saved $200,000 for management by noticing recurring problem with guest room toilet valves.
+        </item>
+        <item>Certified Workforce Development Professional / Career Specialist offering experience providing tailored career counseling, coaching, and job seeker services. Work well with clients from all walks of life to identify values, develop possible career paths, and design effective job search strategies. 90% successful employment placement rate. Proficient with database programs including Oracle and Microsoft SQL Server.
+        </item>
+        <item>Seeking a rewarding Entry Level Financial Analyst position with ABC company to utilize learnings in financial reporting, forecasting, and planning and knowledge of accounting software.
+        </item>
+        <item>Sales professional with 4+ years experience in lead generation and lead qualification, proven customer service, and communication skills to effectively fill the Sales Associate role in your company.
+        </item>
+    </string-array>
+
+    <string-array name="letter_array">
+        <item>Internship Cover Letter</item>
+        <item>Career Change Cover Letter</item>
+        <item>Response for advertised job opening</item>
+        <item>Referral Cover Letter</item>
+        <item>Journal Submission Cover Letter</item>
+        <item>Email Cover Letter</item>
+        <item>Student Cover Letter</item>
+        <item>Freshers Cover Letter</item>
+        <item>College Admission Cover Letter</item>
+        <item>Cover Letter for experienced</item>
+    </string-array>
+
+</resources>

@@ -1,9 +1,16 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
+import 'package:resume_builder_project/core/screens/resume_information_tabs/select_objective_screen.dart';
+import '../../services/resume_storage.dart';
 
 class ObjectiveInformationScreen extends StatefulWidget {
-  const ObjectiveInformationScreen({super.key});
+  final Map<String, dynamic> resume;
+
+  const ObjectiveInformationScreen({
+    super.key,
+    required this.resume,
+  });
 
   @override
   State<ObjectiveInformationScreen> createState() =>
@@ -23,6 +30,7 @@ class _ObjectiveInformationScreenState
   void initState() {
     super.initState();
     _quillController = QuillController.basic();
+    _loadData();
   }
 
   @override
@@ -32,21 +40,79 @@ class _ObjectiveInformationScreenState
     super.dispose();
   }
 
-  /// ====== PLACEHOLDER FUNCTIONS (mày xử sau) ======
-  void _selectObjective() {
-    // TODO: select objective logic
-  }
-
-  void _clearObjective() {
-    // TODO: clear objective logic
-  }
-
-  void _saveObjective() {
-    final jsonData = jsonEncode(
-      _quillController.document.toDelta().toJson(),
+  /// ===== LOAD DATA =====
+  Future<void> _loadData() async {
+    final data = await ResumeStorage.loadData(
+      resume: widget.resume,
+      key: 'objective',
     );
 
-    Navigator.pop(context, jsonData);
+    if (data is String && data.isNotEmpty) {
+      final doc = Document.fromJson(jsonDecode(data));
+
+      setState(() {
+        _quillController.dispose();
+        _quillController = QuillController(
+          document: doc,
+          selection: const TextSelection.collapsed(offset: 0),
+        );
+      });
+    }
+  }
+
+  /// ===== SAVE DATA (CHỈ 1 OBJECTIVE – GHI ĐÈ) =====
+  Future<void> _saveData() async {
+    final jsonData =
+    jsonEncode(_quillController.document.toDelta().toJson());
+
+    await ResumeStorage.saveData(
+      resume: widget.resume,
+      key: 'objective',
+      value: jsonData,
+    );
+  }
+
+  /// ===== SELECT OBJECTIVE =====
+  Future<void> _selectObjective() async {
+    final result = await Navigator.push<String>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const SelectObjectiveScreen(),
+      ),
+    );
+
+    if (result == null || result.isEmpty) return;
+
+    final doc = Document.fromJson([
+      {
+        "insert": "$result\n"
+      }
+    ]);
+
+    setState(() {
+      _quillController.dispose();
+      _quillController = QuillController(
+        document: doc,
+        selection: TextSelection.collapsed(offset: result.length),
+      );
+    });
+
+    _focusNode.requestFocus();
+    _saveData();
+  }
+
+  /// ===== CLEAR =====
+  void _clearObjective() {
+    setState(() {
+      _quillController.dispose();
+      _quillController = QuillController.basic();
+    });
+    _saveData();
+  }
+
+  /// ===== SAVE BUTTON =====
+  void _saveObjective() async {
+    await _saveData();
   }
 
   @override
@@ -67,17 +133,13 @@ class _ObjectiveInformationScreenState
                 ),
                 child: Column(
                   children: [
-                    /// TOOLBAR
+                    /// ===== TOOLBAR (GIỮ NGUYÊN) =====
                     Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      decoration: const BoxDecoration(
                         color: Colors.teal,
-                        borderRadius: const BorderRadius.vertical(
-                          top: Radius.circular(8),
-                        ),
+                        borderRadius:
+                        BorderRadius.vertical(top: Radius.circular(8)),
                       ),
                       child: SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
@@ -102,11 +164,11 @@ class _ObjectiveInformationScreenState
                             const SizedBox(width: 6),
                             QuillToolbarToggleStyleButton(
                               controller: _quillController,
-                              attribute: Attribute.ol,
+                              attribute: Attribute.ul,
                             ),
                             QuillToolbarToggleStyleButton(
                               controller: _quillController,
-                              attribute: Attribute.ul,
+                              attribute: Attribute.ol,
                             ),
                             const SizedBox(width: 6),
                             QuillToolbarHistoryButton(
@@ -122,7 +184,7 @@ class _ObjectiveInformationScreenState
                       ),
                     ),
 
-                    /// EDITOR
+                    /// ===== EDITOR =====
                     Expanded(
                       child: Padding(
                         padding: const EdgeInsets.all(12),
@@ -183,9 +245,6 @@ class _ObjectiveInformationScreenState
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.teal,
                   padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
                 ),
                 onPressed: _saveObjective,
                 child: const Text(

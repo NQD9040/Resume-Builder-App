@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import '../../services/resume_storage.dart';
 
 class CoverLetterInformationScreen extends StatefulWidget {
-  const CoverLetterInformationScreen({super.key});
+  final Map<String, dynamic> resume;
+
+  const CoverLetterInformationScreen({
+    super.key,
+    required this.resume,
+  });
 
   @override
   State<CoverLetterInformationScreen> createState() =>
@@ -16,18 +22,47 @@ class _CoverLetterInformationScreenState
 
   final TextEditingController _letterController = TextEditingController();
 
-  /// ===== PLACEHOLDER FUNCTIONS =====
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+
+  /// ===== LOAD DATA =====
+  Future<void> _loadData() async {
+    final data = await ResumeStorage.loadData(
+      resume: widget.resume,
+      key: 'coverLetter',
+    );
+
+    if (data is String && data.isNotEmpty) {
+      _letterController.text = data;
+    }
+  }
+
+  /// ===== SAVE DATA =====
+  Future<void> _saveData() async {
+    await ResumeStorage.saveData(
+      resume: widget.resume,
+      key: 'coverLetter',
+      value: _letterController.text,
+    );
+  }
+
+  /// ===== SELECT LETTER (CHƯA LÀM) =====
   void _selectLetter() {
     // TODO: chọn cover letter mẫu
   }
 
+  /// ===== CLEAR =====
   void _clearLetter() {
     _letterController.clear();
+    _saveData();
   }
 
+  /// ===== SAVE (KHÔNG POP) =====
   void _saveLetter() {
-    final content = _letterController.text;
-    Navigator.pop(context, content);
+    _saveData();
   }
 
   @override
@@ -55,8 +90,8 @@ class _CoverLetterInformationScreenState
               child: TextField(
                 controller: _letterController,
                 keyboardType: TextInputType.multiline,
-                minLines: 1,        // ban đầu 1 dòng
-                maxLines: null,     // gõ nhiều thì tự nở
+                minLines: 1,
+                maxLines: null,
                 decoration: const InputDecoration(
                   border: InputBorder.none,
                   hintText: "Write your cover letter here...",
